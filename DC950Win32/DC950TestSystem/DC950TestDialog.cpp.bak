@@ -1,0 +1,546 @@
+/*  Project: DC950TestSystem
+*   DC950TestDialog.cpp - implementation file for main dialog box 
+*	11-26-17 JBS: Converted *ptrDialog to global, removed from all headers.
+*	12-2-17 JBS: Converted to Win32 bits for PC in work cell.
+*	12-3-17 JBS: Added Spectrometer diagnostics dialog box
+*	12-10-17 JBS: All calculations for irradiance, color temp etc are completed
+*	12-11-17 JBS: DC950IR P/N: 660001661561
+*	12-13-17 JBS: Prepared system for demo.
+*	12-14-17 JBS: Fixed pass/fail display bug
+*	12-14-17 JBS: Eliminated color temp for filter test, 
+*	 modified ADMIN to adjust MIN and MAX peak amplitude for filter test.
+*    Make sure that timer doesn't run past pauses for manual steps.
+*	12-15-17 JBS: Fixed bug that crashed the program when the spreadsheet was being created.
+*	12-16-17 JBS: Eliminated unused edit boxes from main dialog box.
+*	12-16-17 JBS: Added part number scan.
+*	12-19-17 JBS: Debugging and cleanup at Setra. Part number match added. Spreadsheet location hard coded.
+*	12-19-17 JBS: Added integration time, number of scans and averages to Admin 2.
+*	12-20-17 JBS: Added stray light correction.
+*	12-22-17 JBS: Added edit box for setting spreadsheet name and path in Admin 1.
+*	12-23-17 JBS: Fixed strdup() memory leak in loadINIpartNumbers(), LoadExcelFilename(), LoadScanData()
+*	12-28-17 JBS: Includes SpreadsheetIsOpen() and CheckAndCreateDirectory() in Initialize.cpp
+*	12-28-17 JBS: Added minor enhancements and bug fixes at Setra, 
+*					including spectrometer test label next to part number edit box.
+*					HALT Button commented out.
+*	12-29-17 JBS:	Added m_static_ButtonEnter.EnableWindow(TRUE) to StopTimer() but haven't tested it yet.
+*	01-01-17 JBS:	Substituted INSTRUCT Edit box for LINE 1,2,3. Low level routines can write to box if a system
+*					error occurs. Otherwise lines 1,2,3 
+*	01-03-17 JBS:	Added SYSTEM_ERROR, SYSTEM_HALT, and RETRY_TEST to Execute().
+*					Instruction display box has six lines. 
+*					1) Read testStep[] text and strLineOne[] etc. Any text written to strLineOne[] takes precedence.
+*					2) After copying to instruct box, clear strLineOne[].
+*	01-04-17 JBS:	Eliminated DisplayMessageBox(), substituted INSTRUCTION WINDOW
+*	01-05-17 JBS:	Cleaned up new code at home, implemented ENTER_CLICK, PREVIOUS_CLICK, 
+*					FAIL_CLICK, PASS_CLICK, HALT_CLICK, RETRY_CLICK, TIMER_INT
+*					Tested code at home in demo mode.
+*					DEBUGGED at Setra test stand.
+*	01-08-17 JBS:	Changed FINAL_PASS to FINAL_ASSEMBLY at home. Cleaned up instruction text.
+*	01-08-17 JBS:	Debugged at Setra moved INI files to internal folder and working spreadsheet and backup spreadsheet
+*/
+#include "stdafx.h"
+#include "DC950Test.h"
+#include "DC950TestDialog.h"
+#include "TestApp.h"
+#include "Definitions.h"
+#include <windows.h>
+#include <iostream>
+#include <sstream>
+#include <string.h>
+#include "avaspec.h"
+#include "BasicExcel.hpp"
+#include "ExcelFormat.h"
+#include <time.h>
+#include "ReadOnlyEdit.h"
+#include "PasswordEntry_Dlg.h"	
+#include "StdAfx.h"
+
+using namespace WinCompFiles;
+using namespace YExcel;
+using namespace ExcelFormat;
+
+BOOL runFilterActuatorTest = FALSE;
+
+enum CALLERS {
+	ENTER_CLICK = 0,
+	PREVIOUS_CLICK,
+	FAIL_CLICK,
+	PASS_CLICK,
+	HALT_CLICK,
+	RETRY_CLICK,
+	TIMER_INT
+};
+
+const char *CurrentDataFilename = "NewTestData.xls";
+char ExcelFilename[MAXFILENAME] = "C:\\DC950_Test\\TestFile.xls";
+char ExcelBackupFilename[MAXFILENAME+8] = "";
+DATAstring arrPartNumbers[MAX_PART_NUMBERS] = {"660001661561"};
+DATAstring arrTestData[TOTAL_COLUMNS];
+
+int totalPartNumbers = 1;
+
+extern DeviceConfigType* l_pDeviceData;
+extern uint16	m_StopPixel;
+
+int stepNumber = 0;
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+
+TestApp MyTestApp;	
+HANDLE m_timerHandle = NULL;
+CTestDialog *ptrDialog;
+
+// Dialog constructor
+CTestDialog::CTestDialog(CWnd* pParent /*=NULL*/)	: CDialog(CTestDialog::IDD, pParent)
+{
+
+}
+
+// Dialog deconstructor: shut down system 
+CTestDialog::~CTestDialog() {	
+	MyTestApp.CloseSpreadsheet();	
+	MyTestApp.closeAllSerialPorts();		
+	MyTestApp.CloseSpectrometer();
+	delete l_pDeviceData;
+}
+
+void CTestDialog::DoDataExchange(CDataExchange* pDX)
+{
+	CDialog::DoDataExchange(pDX);				
+	DDX_Control(pDX, IDC_BUTTON_ENTER, m_static_ButtonEnter); 
+	DDX_Control(pDX, IDC_BUTTON_PASS,  m_static_ButtonPass);
+	DDX_Control(pDX, IDC_BUTTON_FAIL, m_static_ButtonFail);
+	//DDX_Control(pDX, IDC_BUTTON_TEST, m_static_ButtonTest);	
+	DDX_Control(pDX, IDC_BUTTON_PREVIOUS, m_static_ButtonPrevious);
+	DDX_Control(pDX, IDC_BUTTON_HALT, m_static_ButtonHalt);
+	DDX_Control(pDX, IDC_EDIT_BARCODE, m_BarcodeEditBox);
+	DDX_Control(pDX, IDC_EDIT_PARTNUMBER, m_PartNumberEditBox);
+	DDX_Control(pDX, IDC_EDIT_TEST1, m_EditBox_Test1);
+	DDX_Control(pDX, IDC_EDIT_TEST2, m_EditBox_Test2);
+	DDX_Control(pDX, IDC_EDIT_TEST3, m_EditBox_Test3);
+	DDX_Control(pDX, IDC_EDIT_TEST4, m_EditBox_Test4);
+	DDX_Control(pDX, IDC_EDIT_TEST5, m_EditBox_Test5);
+	DDX_Control(pDX, IDC_EDIT_TEST6, m_EditBox_Test6);
+	DDX_Control(pDX, IDC_EDIT_TEST7, m_EditBox_Test7);
+	DDX_Control(pDX, IDC_EDIT_TEST8, m_EditBox_Test8);
+	DDX_Control(pDX, IDC_EDIT_TEST10, m_EditBox_Test9);
+	DDX_Control(pDX, IDC_EDIT_TEST11, m_EditBox_Test10);
+	DDX_Control(pDX, IDC_EDIT_INSTRUCT, m_EditBox_Instruct);
+
+	DDX_Control(pDX, IDC_EDIT_LOG, m_EditBox_Log);	
+	DDX_Control(pDX, IDC_STATIC_SN, m_static_BarcodeLabel);	
+	DDX_Control(pDX, IDC_STATIC_PARTNO, m_static_PartNumber);
+	DDX_Control(pDX, IDC_BUTTON_RETRY, m_static_ButtonRetry);
+			
+	DDX_Control(pDX, IDC_BUTTON_ADMIN1,  m_static_ButtonAdmin1);	
+	DDX_Control(pDX, IDC_BUTTON_ADMIN2,  m_static_ButtonAdmin2);
+}
+
+
+BEGIN_MESSAGE_MAP(CTestDialog, CDialog)
+	ON_WM_SYSCOMMAND()
+	
+	ON_BN_CLICKED(IDC_BUTTON_ENTER, &CTestDialog::OnClickedButtonEnter)
+	ON_BN_CLICKED(IDC_BUTTON_HALT, &CTestDialog::OnClickedButtonHalt)
+	ON_BN_CLICKED(IDC_BUTTON_PREVIOUS, &CTestDialog::OnClickedButtonPrevious)
+	ON_BN_CLICKED(IDC_BUTTON_PASS, &CTestDialog::OnClickedButtonPass)
+	ON_BN_CLICKED(IDC_BUTTON_FAIL, &CTestDialog::OnClickedButtonFail)
+	ON_BN_CLICKED(IDC_BUTTON_RETRY, &CTestDialog::OnClickedButtonRetry)
+		
+	ON_BN_CLICKED(IDC_BUTTON_ADMIN1, &CTestDialog::OnClickedButtonAdmin1)
+	ON_WM_ERASEBKGND()
+	ON_BN_CLICKED(IDC_BUTTON_ADMIN2, &CTestDialog::OnClickedButtonAdmin2)
+	END_MESSAGE_MAP()
+
+
+// This routine prevents the ENTER or ESCAPE keys from closing the main dialog box
+// and thereby shutting down the program. It is necessary because 
+// the barcode scanner otherwise closes the dialog box 
+// when it sends a carriage return after the serial number.
+BOOL CTestDialog::PreTranslateMessage(MSG* pMsg)
+{
+	if (pMsg->message == WM_KEYDOWN)
+	{
+		if (pMsg->wParam == VK_RETURN || pMsg->wParam == VK_ESCAPE)
+		{
+			return TRUE;                // Do not process further
+		}
+	}
+
+	return CWnd::PreTranslateMessage(pMsg);
+}
+
+
+
+void CTestDialog::OnClickedButtonAdmin2()
+{		
+	if (enableAdmin) m_SpecDiag.DoModal();
+	else {
+		CString s = (CString)"";  
+		m_PED.DoModal(&s);	
+		if(s != "Setra")	
+			AfxMessageBox((LPCTSTR) "Incorrect password entered!\r\nPlease see system adminstrator for access to administrator utilities.");	
+		else
+		{
+			enableAdmin = TRUE;
+			m_SpecDiag.DoModal();
+		}
+	}	
+}
+
+void CTestDialog::OnClickedButtonAdmin1()
+{	
+	if (enableAdmin) m_Admin1.DoModal();
+	else {
+		CString s = (CString)"";
+		m_PED.DoModal(&s);	
+		if(s != "Setra")	
+			AfxMessageBox((LPCTSTR)"Incorrect password entered!\r\nPlease see system adminstrator for access to administrator utilities.");	
+		else
+		{
+			enableAdmin = TRUE;
+			m_Admin1.DoModal();
+		}
+	}
+	
+}
+
+
+
+
+
+
+
+
+BOOL getExcelBackupFilename(char *ptrFilename, char *ptrBackupFilename)
+{
+	// if (ptrFilename == NULL || ptrBackupFilename) return FALSE;
+	if (!MyTestApp.validateSpreedsheetFilename(ptrFilename)) 
+		return FALSE;
+	int i, j;
+	j = 0;
+	for (i = 0; i < MAXFILENAME; i++)
+	{
+		if (ptrFilename[i] == '\0') break;
+		if (ptrFilename[i] == '\\') j = i + 1;
+	}
+	
+	for (i = 0; i < MAXFILENAME; i++)
+	{
+		char ch;
+		ch = ptrFilename[j++];
+		ptrBackupFilename[i] = ch;
+		if (ch == '\0') break;
+	}		
+	return TRUE;
+}
+
+
+// Initializes main dialog box at startup
+BOOL CTestDialog::OnInitDialog()
+{		
+	int length = 0;
+	CDialog::OnInitDialog();	
+	 
+	enableAdmin = FALSE;
+
+	ptrDialog = this;
+	stepNumber = 0;
+		
+	runFilterActuatorTest = FALSE;				
+
+	// Initialize fonts to use when needed.
+	// Three different text sizes are used: 
+	// BigFont, MidFont, and SmallFont
+	pEdit = (CEdit*) GetDlgItem(IDC_EDIT_LOG);
+	pInstruct = (CReadOnlyEdit*) GetDlgItem(IDC_EDIT_INSTRUCT);
+	MyTestApp.InitializeFonts();
+		
+	stepNumber = 0;		
+	MyTestApp.InitializeDisplayInstructions();	
+	MyTestApp.DisplayIntructions(stepNumber, NOT_DONE_YET);
+			
+	m_EditBox_Log.SetLimitText(MAXLOG); 
+	m_EditBox_Instruct.SetLimitText(MAXLOG);
+	MyTestApp.InitializeTestEditBoxes();
+	
+	MyTestApp.loadINIfileBinary();	
+	MyTestApp.loadINIpartNumbers();			
+	MyTestApp.loadConfigFile();	
+	
+	MyTestApp.LoadExcelFilename();	
+	
+	getExcelBackupFilename(ExcelFilename, ExcelBackupFilename);
+
+	// If output spreadsheet can't be found:
+	// Create output spreadsheet and copy backup spreadsheet to it
+	// Also create working copy "CurrentDataFilename" with same data:
+	if (GetFileAttributes(ExcelFilename) == INVALID_FILE_ATTRIBUTES)
+	{
+		CopyFile(ExcelBackupFilename, ExcelFilename, FALSE);
+		CopyFile(ExcelBackupFilename, CurrentDataFilename, FALSE);
+	}
+	// Otherwise, if output spreadsheet can be found, make a backup copy. 
+	// Also create working copy "CurrentDataFilename" with same data:
+	else 
+	{
+		CopyFile(ExcelFilename, ExcelBackupFilename, FALSE);
+		CopyFile(ExcelFilename, CurrentDataFilename, FALSE);
+	}
+	
+
+#ifdef USE_SPREADSHEET	
+	MyTestApp.loadSpreadsheet();	
+#endif	
+	return TRUE;  
+}
+
+
+void CTestDialog::StopTimer() {	
+	if (m_timerHandle != NULL) {
+		DeleteTimerQueueTimer(NULL, m_timerHandle, NULL);
+		m_timerHandle = NULL;
+	}
+	MyTestApp.resetSubStepNumber();	
+}
+
+
+
+
+
+
+
+
+
+// TestHandler() - executes test sequence.
+//
+// This routine calls MyTestApp.Execute() to run each test.
+// Some tests are performed manually by the operator,
+// in which case TestHandler() is called when a pushbutton is clicked:
+// either ENTER, PASS, or FAIL.
+// Otherwise, for automated test sequences,
+// TestHandler() is called by the timer routine timerHandler() 
+
+void CTestDialog::TestHandler(int caller)
+{	
+static int previousStepNumber = 0;
+
+	if (stepNumber != RETRY_TEST) 
+		previousStepNumber = stepNumber;
+
+	if (caller == HALT_CLICK)
+	{		
+		MyTestApp.DisplayIntructions(SYSTEM_HALT, SYSTEM_ERROR);
+		MyTestApp.Execute(SYSTEM_HALT);
+		stepNumber = 0;
+		StopTimer();
+		return;
+	}
+	else if (caller == PREVIOUS_CLICK)
+	{
+		int  stepType, boxNum;
+		do 
+		{
+			if (stepNumber <= BARCODE_SCAN) break;
+			stepNumber--;
+			boxNum = MyTestApp.testStep[stepNumber].editBoxNumber;
+			if (boxNum) MyTestApp.DisplayTestEditBox(boxNum, NOT_DONE_YET);
+			if (boxNum == 6) MyTestApp.DisplayTestEditBox(7, NOT_DONE_YET);
+			if (stepNumber == REMOTE_TEST) break;		
+			stepType = MyTestApp.testStep[stepNumber].stepType;
+		} while (stepType == AUTO);
+
+		if (stepNumber == 1)
+		{
+			MyTestApp.resetDisplays(); 
+			MyTestApp.enableBarcodeScan();
+		}	
+		else MyTestApp.disableBarcodeScan();
+
+		if (stepNumber == 2)
+		{		
+			MyTestApp.enablePartNumberScan();
+		}
+		else MyTestApp.disablePartNumberScan();
+		
+		MyTestApp.DisplayIntructions(stepNumber, NOT_DONE_YET);	
+
+		return;
+	} 
+	else if (caller == FAIL_CLICK)	
+	{
+		if (stepNumber == HI_POT_TEST || stepNumber == GROUND_BOND_TEST)	
+		{
+			MyTestApp.testStep[stepNumber].Status = FAIL;
+			MyTestApp.Execute(stepNumber);
+			stepNumber = RETRY_TEST;
+		}
+		else stepNumber = FINAL_FAIL;
+
+		MyTestApp.DisplayIntructions(stepNumber, FAIL);
+		return;
+	}
+	else if (caller == RETRY_CLICK) 	
+	{
+		stepNumber = previousStepNumber;
+		if (stepNumber > DARK_SCAN_SETUP) 
+		{
+			stepNumber = DARK_SCAN_SETUP;
+			MyTestApp.DisplayTestEditBox(ACTUATOR_EDIT, NOT_DONE_YET);
+			MyTestApp.DisplayTestEditBox(FILTER_ON_EDIT, NOT_DONE_YET);
+			MyTestApp.DisplayTestEditBox(FILTER_OFF_EDIT, NOT_DONE_YET);
+		}		  
+		else if (stepNumber > REMOTE_TEST_SETUP) 
+		{
+			stepNumber = REMOTE_TEST_SETUP;
+			MyTestApp.DisplayTestEditBox(REMOTE_EDIT, NOT_DONE_YET);
+			MyTestApp.DisplayTestEditBox(AC_SWEEP_EDIT, NOT_DONE_YET);
+			MyTestApp.DisplayTestEditBox(SIGNAL_EDIT, NOT_DONE_YET);
+		}
+		else 
+		{
+			int	EditBoxNum = MyTestApp.testStep[stepNumber].editBoxNumber;
+			if (EditBoxNum) MyTestApp.DisplayTestEditBox(EditBoxNum, NOT_DONE_YET);
+		}
+		MyTestApp.DisplayIntructions(stepNumber, NOT_DONE_YET);
+		return;
+	}
+	else if (caller == PASS_CLICK)
+	{
+		if (stepNumber == HI_POT_TEST || stepNumber == GROUND_BOND_TEST)	
+			MyTestApp.testStep[stepNumber].Status = PASS;
+	}
+	
+	// Execute test step and display result:
+	int testResult = MyTestApp.Execute(stepNumber);	
+	
+	if (testResult != NOT_DONE_YET) {		
+		StopTimer();				
+
+		if (testResult == SYSTEM_ERROR)
+		{
+			if (stepNumber > 0) 
+			{
+				stepNumber = SYSTEM_ERROR;							
+				#ifndef NOPOWERSUPPLY
+					MyTestApp.SetPowerSupplyVoltage(0, 60);
+				#endif
+				#ifndef NOSERIAL
+					MyTestApp.closeAllSerialPorts();
+				#endif
+			}
+		}
+
+		// Otherwise if a unit has completed full test sequence,
+		// set step back to 1 for testing next unit:
+		else if (stepNumber == FINAL_ASSEMBLY || stepNumber == FINAL_FAIL)
+		{
+			stepNumber = 1;
+			testResult = NOT_DONE_YET;
+		}
+
+		// If unit passedd, then advance to next step.
+		// If unit isn't the filter actuator model, 
+		// then skip the ACTUATOR and SPECTROMETER tests and go to FINAL PASS:
+		else if (testResult == PASS)
+		{			
+			//	MyTestApp.ClearInstructBox();
+			stepNumber++; 				
+			if (runFilterActuatorTest == FALSE){
+				if (stepNumber == END_STANDARD_UNIT_TESTS)
+					stepNumber = FINAL_ASSEMBLY;					
+			}				
+		}
+		// Otherwise if unit FAIL, then query user to retry or quit testing unit:
+		else if (stepNumber > 2)
+		{								
+			if (stepNumber == RETRY_TEST)
+				stepNumber = FINAL_FAIL;
+			else if (stepNumber == FINAL_FAIL)
+				stepNumber = 1;
+			else stepNumber = RETRY_TEST;				
+		}
+	}
+	
+	// If this is the start of an automated sequence
+	// or if sequence is already in progress, start timer.
+	// If next step is manual, make sure timer is off:				
+	if (MyTestApp.testStep[stepNumber].stepType == AUTO) StartTimer();
+	else StopTimer();
+
+	// Now display next step:
+	MyTestApp.DisplayIntructions(stepNumber, testResult);
+						
+
+	// Now wait for user to hit ENTER or TimerProc( ) to call this routine and execute currrent step	   		
+}
+
+void CTestDialog::OnClickedButtonPass()
+{
+	MyTestApp.testStep[stepNumber].Status = PASS;
+	TestHandler(PASS_CLICK);
+}
+
+void CTestDialog::OnClickedButtonFail()
+{
+	TestHandler(FAIL_CLICK);
+}
+
+void CTestDialog::OnClickedButtonEnter() 
+{	
+	m_static_ButtonEnter.EnableWindow(FALSE);
+	TestHandler(ENTER_CLICK);
+}
+
+void CALLBACK TimerProc(CTestDialog *lpParametar, BOOLEAN TimerOrWaitFired)
+{
+	// This is used only to call QueueTimerHandler
+	// Typically, this function is static member of CTimersDlg	
+	CTestDialog *ptrTimer;
+	ptrTimer = lpParametar;
+	ptrTimer->timerHandler();			
+}
+
+void CTestDialog::timerHandler() {
+	if (MyTestApp.testStep[stepNumber].stepType == AUTO) 
+		TestHandler(TIMER_INT);
+	else StopTimer();			
+}
+
+// HALT TIMER - 
+void CTestDialog::OnClickedButtonHalt()
+{	
+	m_static_ButtonHalt.EnableWindow(FALSE);
+	TestHandler(HALT_CLICK);	
+}
+
+void CTestDialog::OnClickedButtonRetry()
+{	
+	TestHandler(RETRY_CLICK);
+}
+
+
+// EditBoxNumber
+// PREVIOUS BUTTON
+void CTestDialog::OnClickedButtonPrevious()
+{	
+	TestHandler(PREVIOUS_CLICK);
+}
+
+
+void CTestDialog::StartTimer() {
+	
+	if (m_timerHandle == NULL) {
+		DWORD elapsedTime = 3000;
+		BOOL success = ::CreateTimerQueueTimer(  // Create new timer
+			&m_timerHandle,
+			NULL,
+			(WAITORTIMERCALLBACK)TimerProc,
+			this,
+			0,
+			elapsedTime,
+			WT_EXECUTEINTIMERTHREAD);
+	}
+	// MyTestApp.resetSubStepNumber();
+}

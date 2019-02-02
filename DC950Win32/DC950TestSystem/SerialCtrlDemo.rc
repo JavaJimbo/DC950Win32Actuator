@@ -1,0 +1,426 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Chinese (Simplified, PRC) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
+    "LANGUAGE 4, 2\r\n"
+    "#pragma code_page(936)\r\n"
+    "#include ""res\\SerialCtrlDemo.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""     // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\SerialCtrlDemo.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 235, 55
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About SerialCtrlDemo"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,16,WS_GROUP
+END
+
+IDD_SERIALCTRLDEMO_DIALOG DIALOGEX 0, 0, 433, 262
+STYLE DS_SETFONT | DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "DC950 Test System"
+MENU IDR_MENU1
+FONT 12, "Microsoft Sans Serif", 400, 0, 0x0
+BEGIN
+    LTEXT           "Serial Number:",IDC_STATIC_SN,34,7,51,8,NOT WS_VISIBLE
+    EDITTEXT        IDC_EDIT_BARCODE,86,5,87,14,ES_AUTOHSCROLL | NOT WS_VISIBLE
+    PUSHBUTTON      "ENTER",IDC_BUTTON_ENTER,346,92,50,14
+    PUSHBUTTON      "FAIL",IDC_BUTTON_FAIL,347,129,50,14,WS_DISABLED
+    PUSHBUTTON      "PASS",IDC_BUTTON_PASS,347,110,50,14,WS_DISABLED
+    PUSHBUTTON      "PREVIOUS",IDC_BUTTON_PREVIOUS,348,167,51,14
+    PUSHBUTTON      "STOP TEST",IDC_BUTTON_HALT,348,5,50,14,WS_DISABLED
+    EDITTEXT        IDC_EDIT_TEST1,32,81,132,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_EDIT_TEST2,31,101,133,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_EDIT_TEST3,31,121,134,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_EDIT_TEST4,31,140,134,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_EDIT_TEST5,31,159,134,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_EDIT_TEST6,181,81,132,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_EDIT_TEST7,181,100,132,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_EDIT_TEST8,181,120,133,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_EDIT_INSTRUCT,32,25,366,49,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_TEST10,181,140,132,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_EDIT_TEST11,181,159,133,14,ES_AUTOHSCROLL | WS_DISABLED
+    PUSHBUTTON      "Admin 1",IDC_BUTTON_ADMIN1,349,223,50,11
+    PUSHBUTTON      "Admin 2",IDC_BUTTON_ADMIN2,349,238,50,11
+    LTEXT           "Part Number:",IDC_STATIC_PARTNO,183,8,51,8,NOT WS_VISIBLE
+    EDITTEXT        IDC_EDIT_PARTNUMBER,234,5,58,14,ES_AUTOHSCROLL | NOT WS_VISIBLE
+    EDITTEXT        IDC_EDIT_LOG,30,180,294,60,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | WS_VSCROLL,WS_EX_LEFTSCROLLBAR
+    PUSHBUTTON      "RETRY",IDC_BUTTON_RETRY,348,148,50,14
+    LTEXT           "Spreadsheet",IDC_STATIC_FILENAME,22,245,308,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904e4"
+        BEGIN
+            VALUE "CompanyName", "TODO: <Company name>"
+            VALUE "FileDescription", "TODO: <File description>"
+            VALUE "FileVersion", "1.0.0.1"
+            VALUE "InternalName", "SerialCtrlDemo.exe"
+            VALUE "LegalCopyright", "TODO: (c) <Company name>.  All rights reserved."
+            VALUE "OriginalFilename", "SerialCtrlDemo.exe"
+            VALUE "ProductName", "TODO: <Product name>"
+            VALUE "ProductVersion", "1.0.0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_SERIALCTRLDEMO_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 10
+        RIGHTMARGIN, 420
+        BOTTOMMARGIN, 261
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_ABOUTBOX            "&About SerialCtrlDemo..."
+END
+
+#endif    // Chinese (Simplified, PRC) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG_PWENTRY DIALOGEX 0, 0, 279, 105
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "AdminPassword Entry"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,180,35,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,180,66,50,14
+    EDITTEXT        IDC_EDIT_PASSWORD,44,68,79,14,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "Enter Admistrator password below for access to system configuration and COM port setup.",IDC_STATIC,36,26,113,26
+END
+
+IDD_DIALOG_ADMIN1 DIALOGEX 0, 0, 463, 338
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Admin 1 Settings"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,261,284,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,341,284,50,14
+    EDITTEXT        IDC_EDIT_COM_INTERFACE,55,33,30,17
+    EDITTEXT        IDC_EDIT_COM_MULTIMETER,126,33,29,17,ES_AUTOHSCROLL
+    GROUPBOX        "Multimeter COM",IDC_STATIC,115,18,63,42
+    EDITTEXT        IDC_EDIT_COM_POWER_SUPPLY,195,34,39,17,ES_AUTOHSCROLL
+    GROUPBOX        "Power Supply COM",IDC_STATIC,186,18,69,43
+    GROUPBOX        "Interface COM",IDC_STATIC,47,17,60,42
+    CONTROL         "",IDC_SPIN_COM_INTERFACE,"msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,90,34,11,14
+    CONTROL         "",IDC_SPIN_COM_MULTIMETER,"msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,161,34,11,14
+    CONTROL         "",IDC_SPIN_COM_POWER_SUPPLY,"msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,239,36,11,14
+    EDITTEXT        IDC_EDIT_MAX_FWHM_FILTER,380,172,38,17
+    GROUPBOX        "Center Amplitude Filtered",IDC_STATIC,23,155,95,73
+    CONTROL         "",IDC_SPIN_MAX_CLOSED_FILTER_PEAK_AMPLITUDE,
+                    "msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,104,172,11,14
+    EDITTEXT        IDC_EDIT_MAX_CLOSED_FILTER_PEAK_AMPLITUDE,59,171,38,17
+    GROUPBOX        "FWHM Filtered",IDC_STATIC,347,155,95,74
+    CONTROL         "",IDC_SPIN_MAX_IRRADIANCE_FILTER,"msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,319,174,11,14
+    EDITTEXT        IDC_EDIT_MAX_WAVELENGTH_FILTER,165,172,38,17
+    GROUPBOX        "Center Wavelength Filtered",IDC_STATIC,131,155,95,73
+    CONTROL         "",IDC_SPIN_MAX_WAVELENGTH_FILTER,"msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,209,174,11,14
+    GROUPBOX        "Irradiance Filtered",IDC_STATIC,240,154,95,75
+    EDITTEXT        IDC_EDIT_MAX_IRRADIANCE_FILTER,273,172,38,17
+    CONTROL         "",IDC_SPIN_MAX_FWHM_FILTER,"msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,422,174,11,14
+    EDITTEXT        IDC_EDIT_MIN_CLOSED_FILTER_PEAK_AMPLITUDE,60,196,38,17
+    EDITTEXT        IDC_EDIT_MIN_WAVELENGTH_FILTER,165,198,38,17
+    EDITTEXT        IDC_EDIT_MIN_IRRADIANCE_FILTER,273,198,38,17
+    EDITTEXT        IDC_EDIT_MIN_FWHM_FILTER,380,199,38,17
+    CONTROL         "",IDC_SPIN_MIN_CLOSED_FILTER_PEAK_AMPLITUDE,
+                    "msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,105,198,11,14
+    CONTROL         "",IDC_SPIN_MIN_WAVELENGTH_FILTER,"msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,211,197,11,14
+    CONTROL         "",IDC_SPIN_MIN_IRRADIANCE_FILTER,"msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,319,197,11,14
+    CONTROL         "",IDC_SPIN_MIN_FWHM_FILTER,"msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,422,197,11,14
+    LTEXT           "Max",IDC_STATIC,38,176,14,8
+    LTEXT           "Max",IDC_STATIC,146,178,14,8
+    LTEXT           "Max",IDC_STATIC,253,177,14,8
+    LTEXT           "Max",IDC_STATIC,359,177,14,8
+    LTEXT           "Min",IDC_STATIC,39,201,12,8
+    LTEXT           "Min",IDC_STATIC,146,202,12,8
+    LTEXT           "Min",IDC_STATIC,255,202,12,8
+    LTEXT           "Min",IDC_STATIC,360,201,12,8
+    CONTROL         "",IDC_SPIN_MAX_IRRADIANCE_OPEN,"msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,209,258,11,14
+    EDITTEXT        IDC_EDIT_MAX_IRRADIANCE_OPEN,164,255,38,17
+    EDITTEXT        IDC_EDIT_MIN_IRRADIANCE_OPEN,163,281,38,17
+    CONTROL         "",IDC_SPIN_MIN_IRRADIANCE_OPEN,"msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,210,282,11,14
+    LTEXT           "Max",IDC_STATIC,143,259,14,8
+    LTEXT           "Min",IDC_STATIC,144,284,12,8
+    GROUPBOX        "ColorTemp No Filter",IDC_STATIC,23,238,96,73
+    CONTROL         "",IDC_SPIN_MAX_COLOR_TEMP_OPEN,"msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,103,255,11,14
+    EDITTEXT        IDC_EDIT_MAX_COLOR_TEMP_OPEN,57,254,38,17
+    EDITTEXT        IDC_EDIT_MIN_COLOR_TEMP_OPEN,57,281,38,17
+    CONTROL         "",IDC_SPIN_MIN_COLOR_TEMP_OPEN,"msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,103,282,11,14
+    LTEXT           "Max",IDC_STATIC,39,258,14,8
+    LTEXT           "Min",IDC_STATIC,41,284,12,8
+    GROUPBOX        "Irradiance No Filter",IDC_STATIC,131,239,95,72
+    GROUPBOX        "Lamp Error:   +/- Volts",IDC_STATIC,43,101,96,42
+    GROUPBOX        "5V Ref Error: +/- Volts",IDC_STATIC,159,101,96,42
+    EDITTEXT        IDC_EDIT_LAMP_VOLTAGE,62,116,38,17
+    EDITTEXT        IDC_EDIT_REF_VOLTAGE,177,118,38,17
+    CONTROL         "",IDC_SPIN_LAMP_VOLTAGE,"msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,111,117,11,14
+    CONTROL         "",IDC_SPIN_REF_VOLTAGE,"msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,228,119,11,14
+    LTEXT           "Click OK to save new settings,",IDC_STATIC,256,246,174,15
+    LTEXT           "or CANCEL to quit without saving.",IDC_STATIC,257,263,174,15
+    EDITTEXT        IDC_EDIT_OUTFILE,272,46,168,28,ES_MULTILINE | ES_AUTOHSCROLL | WS_HSCROLL
+    LTEXT           "FILENAME OF SPREADSHEET INCLUDING PATH:",IDC_STATIC,273,31,156,11
+    CONTROL         "Use primary",IDC_RADIO_PRIMARY,"Button",BS_AUTORADIOBUTTON,297,97,54,10
+    GROUPBOX        "Spreadsheet select",IDC_STATIC_SPREADSELECT,272,81,170,37
+    CONTROL         "Use secondary",IDC_RADIO_SECONDARY,"Button",BS_AUTORADIOBUTTON,364,94,63,16
+END
+
+IDD_DIALOG_ADMIN2 DIALOGEX 0, 0, 440, 224
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Admin 2"
+FONT 10, "Microsoft Sans Serif", 400, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,286,192,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,343,192,50,14
+    EDITTEXT        IDC_EDIT_PARTNUMBERS,68,74,88,81,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL,WS_EX_LEFTSCROLLBAR
+    CONTROL         "Stray Light Correction",IDC_CHECK_SLC,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_DISABLED | WS_TABSTOP,74,43,86,10
+    EDITTEXT        IDC_EDIT_INT_TIME,187,33,35,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_NUM_SCANS,350,35,30,12,ES_AUTOHSCROLL
+    LTEXT           "Valid DC950 IR Part Numbers (max 64)",IDC_STATIC,69,61,141,14
+    EDITTEXT        IDC_EDIT_NUM_AVERAGES,269,36,45,12,ES_AUTOHSCROLL
+    GROUPBOX        "Integration Time (ms)",IDC_STATIC,171,21,80,33
+    GROUPBOX        "Number of Averages",IDC_STATIC,260,21,71,33
+    GROUPBOX        "Number of Scans",IDC_STATIC,341,21,65,33
+    CONTROL         "Enable linear correction",IDC_CHECK_LINEAR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,74,25,86,10
+    CONTROL         "",IDC_SPIN_INT_TIME,"msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,227,32,8,14
+    CONTROL         "",IDC_SPIN_NUM_AVERAGES,"msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,318,35,9,14
+    CONTROL         "",IDC_SPIN_NUM_SCANS,"msctls_updown32",UDS_ALIGNRIGHT | UDS_ARROWKEYS,383,34,9,14
+    EDITTEXT        IDC_EDIT_PASSWORD,69,192,191,14,ES_AUTOHSCROLL
+    LTEXT           "To change password, edit text below and click:",IDC_STATIC_PASSWORD,71,173,150,11
+    PUSHBUTTON      "Save Password",IDC_BUTTON_PASSWORD,216,168,41,20,BS_MULTILINE
+    LTEXT           "Click OK to save everything else",IDC_STATIC_PASSWORD2,286,181,100,11
+    EDITTEXT        IDC_EDIT_MIN1,284,77,23,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_MIN2,284,92,23,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_MIN3,285,107,23,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_MIN4,286,122,23,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_MIN5,286,137,23,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_MAX1,342,78,23,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_MAX2,342,93,23,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_MAX3,342,108,23,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_MAX4,342,123,23,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_MAX5,342,138,23,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_MIN6,286,152,23,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_MAX6,341,153,23,12,ES_AUTOHSCROLL
+    LTEXT           "MIN",IDC_STATIC,287,69,14,8
+    LTEXT           "MAX",IDC_STATIC,345,69,14,8
+    LTEXT           "REMOTE LAMP CONTROL VOLTAGE TEST LIMITS",IDC_STATIC,231,60,176,8
+    LTEXT           "0.0",IDC_STATIC,269,79,11,8
+    LTEXT           "3.8",IDC_STATIC,269,93,11,8
+    LTEXT           "8.2",IDC_STATIC,269,109,11,8
+    LTEXT           "12.5",IDC_STATIC,268,125,16,8
+    LTEXT           "16.7",IDC_STATIC,268,139,13,8
+    LTEXT           "20.9",IDC_STATIC,269,154,15,8
+    LTEXT           "0.2",IDC_STATIC,327,81,11,8
+    LTEXT           "4.4",IDC_STATIC,328,96,11,8
+    LTEXT           "8.5",IDC_STATIC,327,111,11,8
+    LTEXT           "12.7",IDC_STATIC,326,125,13,8
+    LTEXT           "16.9",IDC_STATIC,325,140,15,8
+    LTEXT           "21.1",IDC_STATIC,328,155,14,8
+    LTEXT           "Remote: 0V",IDC_STATIC,225,79,37,8
+    LTEXT           "Remote: 2V",IDC_STATIC,225,110,37,8
+    LTEXT           "Remote: 1V",IDC_STATIC,226,94,37,8
+    LTEXT           "Remote: 3V",IDC_STATIC,226,125,37,8
+    LTEXT           "Remote: 4V",IDC_STATIC,228,140,37,8
+    LTEXT           "Remote: 5V",IDC_STATIC,228,154,37,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_DIALOG_PWENTRY, DIALOG
+    BEGIN
+        LEFTMARGIN, 27
+        TOPMARGIN, 7
+    END
+
+    IDD_DIALOG_ADMIN1, DIALOG
+    BEGIN
+        LEFTMARGIN, 27
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 327
+    END
+
+    IDD_DIALOG_ADMIN2, DIALOG
+    BEGIN
+        LEFTMARGIN, 27
+        RIGHTMARGIN, 423
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 214
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU1 MENU
+BEGIN
+    POPUP "File"
+    BEGIN
+        MENUITEM "Exit",                        ID_FILE_EXIT
+    END
+    POPUP "Actuator Controller"
+    BEGIN
+        MENUITEM "Actuator OPEN",                 ID_ACTUATOR_OPEN
+        MENUITEM "Actuator CLOSED",                ID_ACTUATOR_CLOSED
+    END
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE 4, 2
+#pragma code_page(936)
+#include "res\SerialCtrlDemo.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"     // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
